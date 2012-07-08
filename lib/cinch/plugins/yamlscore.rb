@@ -1,6 +1,3 @@
-# source:  https://github.com/telemachus/antinoos/blob/master/memo.rb
-# license: https://github.com/telemachus/antinoos/blob/master/LICENSE
-
 require 'yaml'
 
 module Cinch
@@ -31,7 +28,7 @@ module Cinch
         end
       end
 
-      match(/(\S+) ([-+]1)/,   use_prefix: false, use_suffix: false, method: :change)
+      match(/(\S+) ([-+]1)/,    use_prefix: false, use_suffix: false, method: :change)
       match(/(\S+) ?([-+]{2})/, use_prefix: false, use_suffix: false, method: :change)
       def change(m, nick, score)
         if nick == m.user.nick
@@ -45,8 +42,16 @@ module Cinch
           @scores.delete(nick) if @scores[nick] == 0
           m.reply "#{m.user.nick}(#{@scores[m.user.nick]}) gave #{score} for #{nick}(#{@scores[nick]})."
           update_store
-        else
-          m.reply "User #{nick} is not in the channel, who do you want to score?"
+        elsif %w( , : ).include?(nick[-1]) && m.channel.has_user?(nick.slice(0..-2))
+          nick.slice!(-1)
+          score.sub!(/([+-]){2}/,'\11')
+          @scores[nick] ||= 0
+          @scores[nick] += score.to_i
+          @scores.delete(nick) if @scores[nick] == 0
+          m.reply "#{m.user.nick}(#{@scores[m.user.nick]}) gave #{score} for #{nick}(#{@scores[nick]})."
+          update_store
+        elsif config[:warn_no_user_message]
+          m.reply config[:warn_no_user_message] % nick
         end
       end
 
