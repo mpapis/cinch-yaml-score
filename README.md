@@ -1,5 +1,7 @@
 # Cinch YAML score plugin
 
+[![Code Climate](https://codeclimate.com/github/mpapis/cinch-yaml-score.png)](https://codeclimate.com/github/mpapis/cinch-yaml-score)
+
 A Cinch plugin to count +1, scores are saved in yaml file for persistence.
 
 ## Installation
