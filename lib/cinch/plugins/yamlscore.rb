@@ -36,31 +36,31 @@ module Cinch
         elsif nick == bot.nick
           m.reply "You can't score for me..."
         elsif m.channel.has_user?(nick)
-          score.sub!(/([+-]){2}/,'\11')
-          @scores[nick] ||= 0
-          @scores[nick] += score.to_i
-          @scores.delete(nick) if @scores[nick] == 0
-          m.reply "#{m.user.nick}(#{@scores[m.user.nick]}) gave #{score} for #{nick}(#{@scores[nick]})."
-          update_store
+          change_nick(m, nick, score)
         elsif %w( , : ).include?(nick[-1]) && m.channel.has_user?(nick.slice(0..-2))
           nick.slice!(-1)
-          score.sub!(/([+-]){2}/,'\11')
-          @scores[nick] ||= 0
-          @scores[nick] += score.to_i
-          @scores.delete(nick) if @scores[nick] == 0
-          m.reply "#{m.user.nick}(#{@scores[m.user.nick]}) gave #{score} for #{nick}(#{@scores[nick]})."
-          update_store
+          change_nick(m, nick, score)
         elsif config[:warn_no_user_message]
           m.reply config[:warn_no_user_message] % nick
         end
       end
 
+    private
       def update_store
         synchronize(:update) do
           File.open('scores.yaml', 'w') do |fh|
             YAML.dump(@scores, fh)
           end
         end
+      end
+
+      def change_nick(m, nick, score)
+        score.sub!(/([+-]){2}/,'\11')
+        @scores[nick] ||= 0
+        @scores[nick] += score.to_i
+        @scores.delete(nick) if @scores[nick] == 0
+        m.reply "#{m.user.nick}(#{@scores[m.user.nick]}) gave #{score} for #{nick}(#{@scores[nick]})."
+        update_store
       end
     end
   end
