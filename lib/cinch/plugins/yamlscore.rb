@@ -29,7 +29,7 @@ module Cinch
       end
 
       match(/(\S+) ([-+]1)/,    use_prefix: false, use_suffix: false, method: :change)
-      match(/(\S+) ?([-+]{2})/, use_prefix: false, use_suffix: false, method: :change)
+      match(/(\S+) ?([-+]{2})$/, use_prefix: false, use_suffix: false, method: :change)
       def change(m, nick, score)
         if m.channel.has_user?(nick)
           change_nick(m, nick, score)
