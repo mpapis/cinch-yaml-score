@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'cinch-yaml-score'
-  s.version     = '1.1.0'
+  s.version     = '1.2.0'
   s.summary     =
   s.description = 'A Cinch plugin to count +1, scores are saved in yaml file for persistence.'
   s.authors     = ['Michal Papis']

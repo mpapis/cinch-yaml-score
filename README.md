@@ -35,5 +35,5 @@ bot.start
 !scores
 !score <user>
 <user>[,:]? [+-]1
-<user>[,:]? ?[+-]{2}
+<user>[,:]? ?[+-]{2}$
 ```
