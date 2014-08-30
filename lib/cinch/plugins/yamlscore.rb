@@ -31,11 +31,7 @@ module Cinch
       match(/(\S+) ([-+]1)/,    use_prefix: false, use_suffix: false, method: :change)
       match(/(\S+) ?([-+]{2})/, use_prefix: false, use_suffix: false, method: :change)
       def change(m, nick, score)
-        if nick == m.user.nick
-          m.reply "You can't score for yourself..."
-        elsif nick == bot.nick
-          m.reply "You can't score for me..."
-        elsif m.channel.has_user?(nick)
+        if m.channel.has_user?(nick)
           change_nick(m, nick, score)
         elsif %w( , : ).include?(nick[-1]) && m.channel.has_user?(nick.slice(0..-2))
           nick.slice!(-1)
@@ -55,12 +51,18 @@ module Cinch
       end
 
       def change_nick(m, nick, score)
-        score.sub!(/([+-]){2}/,'\11')
-        @scores[nick] ||= 0
-        @scores[nick] += score.to_i
-        @scores.delete(nick) if @scores[nick] == 0
-        m.reply "#{m.user.nick}(#{@scores[m.user.nick]}) gave #{score} for #{nick}(#{@scores[nick]})."
-        update_store
+        if nick == m.user.nick
+          m.reply "You can't score for yourself..."
+        elsif nick == bot.nick
+          m.reply "You can't score for me..."
+        else
+          score.sub!(/([+-]){2}/,'\11')
+          @scores[nick] ||= 0
+          @scores[nick] += score.to_i
+          @scores.delete(nick) if @scores[nick] == 0
+          m.reply "#{m.user.nick}(#{@scores[m.user.nick]}) gave #{score} for #{nick}(#{@scores[nick]})."
+          update_store
+        end
       end
     end
   end
